@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur ROI - Réveil Brutal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #FFFFFF;
+            color: #1A1A1A;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+        }
+
+        .header h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            color: #325feb;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            color: #666666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .inputs-section {
+            background: rgba(50, 95, 235, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(50, 95, 235, 0.1);
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .input-group {
+            background: rgba(50, 95, 235, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .input-group:hover {
+            border-color: #325feb;
+            transform: translateY(-2px);
+        }
+
+        .input-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #325feb;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .slider-container {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #E5E5E5;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #325feb;
+            cursor: pointer;
+            border: 3px solid #FFF;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            background: #1e40af;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #325feb;
+            cursor: pointer;
+            border: 3px solid #FFF;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .slider-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1A1A1A;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .number-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            background: rgba(50, 95, 235, 0.05);
+            border: 2px solid #E5E5E5;
+            border-radius: 8px;
+            color: #1A1A1A;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .number-input:focus {
+            outline: none;
+            border-color: #325feb;
+        }
+
+        .results-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, rgba(50, 95, 235, 0.08), rgba(50, 95, 235, 0.05));
+            border: 2px solid rgba(50, 95, 235, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(50, 95, 235, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .result-card:hover::before {
+            left: 100%;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            border-color: #325feb;
+            box-shadow: 0 10px 30px rgba(50, 95, 235, 0.2);
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            color: #325feb;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-value {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: #325feb;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .result-subtitle {
+            font-size: 0.9rem;
+            color: #666666;
+            font-style: italic;
+        }
+
+        .section-header {
+            text-align: center;
+            margin: 60px 0 40px 0;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            color: #325feb;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .section-header p {
+            color: #666666;
+            font-size: 1.1rem;
+        }
+
+        .final-cost {
+            background: linear-gradient(135deg, #325feb, #1e40af);
+            border-radius: 25px;
+            padding: 50px;
+            text-align: center;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite;
+            color: #FFFFFF;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(50, 95, 235, 0.5); }
+            50% { box-shadow: 0 0 50px rgba(50, 95, 235, 0.8); }
+        }
+
+        .final-cost h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .final-amount {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+        }
+
+        .final-subtitle {
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #FFFFFF;
+            color: #325feb;
+            padding: 20px 40px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 3px solid #FFFFFF;
+        }
+
+        .cta-button:hover {
+            background: transparent;
+            color: #FFFFFF;
+            transform: scale(1.05);
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .impact-card {
+            background: rgba(50, 95, 235, 0.05);
+            border: 1px solid rgba(50, 95, 235, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .impact-card:hover {
+            border-color: #325feb;
+            transform: translateY(-3px);
+        }
+
+        .impact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .inputs-section {
+                padding: 20px;
+            }
+            
+            .input-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .final-cost {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>RÉVEIL BRUTAL</h1>
+            <p>Découvre ce que tes processus manuels te coûtent <strong>vraiment</strong></p>
+        </header>
+
+        <section class="inputs-section">
+            <div class="input-grid">
+                <div class="input-group">
+                    <label class="input-label">Combien de temps cette merde te prend ?</label>
+                    <div class="slider-container">
+                        <input type="range" id="timeSlider" class="slider" min="5" max="120" value="30">
+                        <div class="slider-value" id="timeValue">30 minutes</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Tu la fais à quelle fréquence ?</label>
+                    <div class="slider-container">
+                        <input type="range" id="frequencySlider" class="slider" min="1" max="20" value="5">
+                        <div class="slider-value" id="frequencyValue">5x/semaine</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Tu te paies combien de l'heure ?</label>
+                    <input type="number" id="rateInput" class="number-input" min="15" max="200" value="35" placeholder="35">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Depuis combien d'années tu fais ça ?</label>
+                    <div class="slider-container">
+                        <input type="range" id="yearsSlider" class="slider" min="1" max="20" value="3">
+                        <div class="slider-value" id="yearsValue">3 ans</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Combien de personnes font cette tâche ?</label>
+                    <div class="slider-container">
+                        <input type="range" id="peopleSlider" class="slider" min="1" max="50" value="1">
+                        <div class="slider-value" id="peopleValue">1 personne</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-header">
+            <h2>Les Chiffres Bruts</h2>
+            <p>Aïe... ça fait mal, non ?</p>
+        </div>
+
+        <section class="results-section">
+            <div class="result-card">
+                <div class="result-title">Temps Perdu Annuel</div>
+                <div class="result-value" id="annualHours">78</div>
+                <div class="result-subtitle">heures dans le vide</div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-title">Coût Annuel</div>
+                <div class="result-value" id="annualCost">2 730€</div>
+                <div class="result-subtitle">qui partent en fumée</div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-title">Coût Historique</div>
+                <div class="result-value" id="historicalCost">8 190€</div>
+                <div class="result-subtitle">déjà perdus à jamais</div>
+            </div>
+        </section>
+
+        <div class="section-header">
+            <h2>La Réalité qui Pique</h2>
+            <p>Imagine si tu récupérais tout ça...</p>
+        </div>
+
+        <section class="results-section impact-grid">
+            <div class="impact-card">
+                <div class="impact-icon">🏠</div>
+                <div class="result-title">Soirées Famille Perdues</div>
+                <div class="result-value" id="familyEvenings">26</div>
+                <div class="result-subtitle">soirées avec tes proches</div>
+            </div>
+
+            <div class="impact-card">
+                <div class="impact-icon">🏖️</div>
+                <div class="result-title">Semaines de Vacances</div>
+                <div class="result-value" id="vacationWeeks">2</div>
+                <div class="result-subtitle">semaines au soleil</div>
+            </div>
+
+            <div class="impact-card">
+                <div class="impact-icon">📺</div>
+                <div class="result-title">Saisons Netflix</div>
+                <div class="result-value" id="netflixSeasons">10</div>
+                <div class="result-subtitle">séries complètes</div>
+            </div>
+        </section>
+
+        <div class="section-header">
+            <h2>L'Impact Équipe</h2>
+            <p>C'est encore pire...</p>
+        </div>
+
+        <section class="results-section">
+            <div class="result-card">
+                <div class="result-title">Heures Collectives</div>
+                <div class="result-value" id="collectiveHours">78</div>
+                <div class="result-subtitle">heures perdues par an</div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-title">Mois de SMIC Gaspillés</div>
+                <div class="result-value" id="smicMonths">2</div>
+                <div class="result-subtitle">mois de SMIC par an</div>
+            </div>
+        </section>
+
+        <div class="final-cost">
+            <h3>Coût Total de ce Processus :</h3>
+            <div class="final-amount" id="totalCost">8 190€</div>
+            <div class="final-subtitle">Et si tu automatisais ça demain ?</div>
+            <a href="https://cal.com/wissam-darsouni/appel-decouverte-30min" class="cta-button">Je veux automatiser ça maintenant</a>
+        </div>
+    </div>
+
+    <script>
+        // Get all input elements
+        const timeSlider = document.getElementById('timeSlider');
+        const frequencySlider = document.getElementById('frequencySlider');
+        const rateInput = document.getElementById('rateInput');
+        const yearsSlider = document.getElementById('yearsSlider');
+        const peopleSlider = document.getElementById('peopleSlider');
+
+        // Get all display elements
+        const timeValue = document.getElementById('timeValue');
+        const frequencyValue = document.getElementById('frequencyValue');
+        const yearsValue = document.getElementById('yearsValue');
+        const peopleValue = document.getElementById('peopleValue');
+
+        // Get result elements
+        const annualHours = document.getElementById('annualHours');
+        const annualCost = document.getElementById('annualCost');
+        const historicalCost = document.getElementById('historicalCost');
+        const familyEvenings = document.getElementById('familyEvenings');
+        const vacationWeeks = document.getElementById('vacationWeeks');
+        const netflixSeasons = document.getElementById('netflixSeasons');
+        const collectiveHours = document.getElementById('collectiveHours');
+        const smicMonths = document.getElementById('smicMonths');
+        const totalCost = document.getElementById('totalCost');
+
+        function updateSliderValues() {
+            timeValue.textContent = `${timeSlider.value} minutes`;
+            frequencyValue.textContent = `${frequencySlider.value}x/semaine`;
+            yearsValue.textContent = `${yearsSlider.value} ans`;
+            peopleValue.textContent = `${peopleSlider.value} personne${peopleSlider.value > 1 ? 's' : ''}`;
+        }
+
+        function animateNumber(element, newValue, suffix = '') {
+            const startValue = parseFloat(element.textContent.replace(/[^\d.-]/g, '')) || 0;
+            const endValue = newValue;
+            const duration = 500;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = startValue + (endValue - startValue) * easeOutQuart;
+                
+                element.textContent = Math.round(currentValue).toLocaleString('fr-FR') + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            requestAnimationFrame(updateNumber);
+        }
+
+        function calculateResults() {
+            const minutes = parseInt(timeSlider.value);
+            const frequency = parseInt(frequencySlider.value);
+            const rate = parseFloat(rateInput.value) || 35;
+            const years = parseInt(yearsSlider.value);
+            const people = parseInt(peopleSlider.value);
+
+            // Core calculations
+            const annualHoursCalc = (minutes * frequency * 52) / 60;
+            const annualCostCalc = annualHoursCalc * rate * people;
+            const historicalCostCalc = annualCostCalc * years;
+
+            // Life equivalents
+            const familyEveningsCalc = Math.floor(annualHoursCalc / 3);
+            const vacationWeeksCalc = Math.floor(annualHoursCalc / 40);
+            const netflixSeasonsCalc = Math.floor(annualHoursCalc / 8);
+
+            // Team impact
+            const collectiveHoursCalc = annualHoursCalc * people;
+            const smicMonthsCalc = annualCostCalc / 1400; // SMIC reference: 1400€/mois
+
+            // Animate all values
+            animateNumber(annualHours, Math.round(annualHoursCalc));
+            animateNumber(annualCost, Math.round(annualCostCalc), '€');
+            animateNumber(historicalCost, Math.round(historicalCostCalc), '€');
+            
+            animateNumber(familyEvenings, familyEveningsCalc);
+            animateNumber(vacationWeeks, vacationWeeksCalc);
+            animateNumber(netflixSeasons, netflixSeasonsCalc);
+            
+            animateNumber(collectiveHours, Math.round(collectiveHoursCalc));
+            animateNumber(smicMonths, Math.round(smicMonthsCalc * 10) / 10); // One decimal place
+            
+            animateNumber(totalCost, Math.round(historicalCostCalc), '€');
+        }
+
+        // Event listeners
+        timeSlider.addEventListener('input', () => {
+            updateSliderValues();
+            calculateResults();
+        });
+
+        frequencySlider.addEventListener('input', () => {
+            updateSliderValues();
+            calculateResults();
+        });
+
+        rateInput.addEventListener('input', calculateResults);
+
+        yearsSlider.addEventListener('input', () => {
+            updateSliderValues();
+            calculateResults();
+        });
+
+        peopleSlider.addEventListener('input', () => {
+            updateSliderValues();
+            calculateResults();
+        });
+
+        // Initialize
+        updateSliderValues();
+        calculateResults();
+
+        // Add some extra visual feedback
+        document.querySelectorAll('.slider').forEach(slider => {
+            slider.addEventListener('input', function() {
+                const value = (this.value - this.min) / (this.max - this.min) * 100;
+                this.style.background = `linear-gradient(to right, #325feb 0%, #325feb ${value}%, #E5E5E5 ${value}%, #E5E5E5 100%)`;
+            });
+        });
+
+        // Initialize slider backgrounds
+        document.querySelectorAll('.slider').forEach(slider => {
+            const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+            slider.style.background = `linear-gradient(to right, #325feb 0%, #325feb ${value}%, #E5E5E5 ${value}%, #E5E5E5 100%)`;
+        });
+    </script>
+</body>
+</html>
