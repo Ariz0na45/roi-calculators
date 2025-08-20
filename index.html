@@ -6,6 +6,41 @@
     <title>Calculateur ROI - Réveil Brutal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #325feb;
+            --primary-hover: #1e40af;
+            --primary-light: rgba(50, 95, 235, 0.1);
+            --primary-lighter: rgba(50, 95, 235, 0.05);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-dark-panel: #1a202c;
+            --text-primary: #1a202c;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --text-dark-panel: #ffffff;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --shadow-card: rgba(0, 0, 0, 0.25);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-dark-panel: #0f172a;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --text-dark-panel: #f1f5f9;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --shadow-card: rgba(0, 0, 0, 0.5);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,339 +49,355 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #FFFFFF;
-            color: #1A1A1A;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
             line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 40px 20px;
-        }
-
-        .header h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
-            color: #325feb;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .header p {
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
-            color: #666666;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .inputs-section {
-            background: rgba(50, 95, 235, 0.05);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 40px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(50, 95, 235, 0.1);
-        }
-
-        .input-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .input-group {
-            background: rgba(50, 95, 235, 0.05);
-            padding: 25px;
-            border-radius: 15px;
-            border: 2px solid transparent;
             transition: all 0.3s ease;
         }
 
-        .input-group:hover {
-            border-color: #325feb;
+        .calculator-container {
+            max-width: 1200px;
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px var(--shadow-card);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            min-height: 600px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 1000;
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(50, 95, 235, 0.3);
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-hover);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(50, 95, 235, 0.4);
+        }
+
+        .theme-toggle:active {
+            transform: translateY(-1px);
+        }
+
+        .left-panel {
+            padding: 48px;
+            background: var(--bg-card);
+            transition: all 0.3s ease;
+        }
+
+        .right-panel {
+            background: var(--bg-dark-panel);
+            color: var(--text-dark-panel);
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            transition: color 0.3s ease;
+        }
+
+        .header p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .input-section {
+            space-y: 32px;
+        }
+
+        .input-group {
+            margin-bottom: 32px;
         }
 
         .input-label {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #325feb;
-            margin-bottom: 15px;
             display: block;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            transition: color 0.3s ease;
         }
 
         .slider-container {
             position: relative;
-            margin: 20px 0;
         }
 
         .slider {
             width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: #E5E5E5;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
             outline: none;
             -webkit-appearance: none;
             appearance: none;
+            margin: 16px 0;
+            transition: all 0.3s ease;
         }
 
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 25px;
-            height: 25px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            background: #325feb;
+            background: var(--primary);
             cursor: pointer;
-            border: 3px solid #FFF;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: none;
+            box-shadow: 0 2px 8px rgba(50, 95, 235, 0.3);
             transition: all 0.2s ease;
         }
 
         .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(50, 95, 235, 0.4);
+        }
+
+        .slider::-webkit-slider-thumb:active {
             transform: scale(1.1);
-            background: #1e40af;
         }
 
         .slider::-moz-range-thumb {
-            width: 25px;
-            height: 25px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            background: #325feb;
+            background: var(--primary);
             cursor: pointer;
-            border: 3px solid #FFF;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: none;
+            box-shadow: 0 2px 8px rgba(50, 95, 235, 0.3);
         }
 
         .slider-value {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #1A1A1A;
-            text-align: center;
-            margin-top: 10px;
+            position: absolute;
+            right: 0;
+            top: -8px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: color 0.3s ease;
         }
 
         .number-input {
             width: 100%;
-            padding: 15px;
-            font-size: 1.2rem;
-            background: rgba(50, 95, 235, 0.05);
-            border: 2px solid #E5E5E5;
+            padding: 12px 16px;
+            font-size: 1.125rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
             border-radius: 8px;
-            color: #1A1A1A;
-            text-align: center;
+            color: var(--text-primary);
             font-weight: 600;
+            transition: all 0.2s ease;
         }
 
         .number-input:focus {
             outline: none;
-            border-color: #325feb;
+            border-color: var(--primary);
         }
 
-        .results-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .result-card {
-            background: linear-gradient(135deg, rgba(50, 95, 235, 0.08), rgba(50, 95, 235, 0.05));
-            border: 2px solid rgba(50, 95, 235, 0.2);
-            border-radius: 20px;
-            padding: 30px;
+        .results-header {
             text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 32px;
         }
 
-        .result-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(50, 95, 235, 0.1), transparent);
-            transition: left 0.5s ease;
+        .results-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 8px;
         }
 
-        .result-card:hover::before {
-            left: 100%;
-        }
-
-        .result-card:hover {
-            transform: translateY(-5px);
-            border-color: #325feb;
-            box-shadow: 0 10px 30px rgba(50, 95, 235, 0.2);
-        }
-
-        .result-title {
-            font-size: 1.1rem;
-            color: #325feb;
-            margin-bottom: 15px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .result-value {
-            font-size: clamp(2rem, 4vw, 3rem);
+        .main-result {
+            font-size: 3.5rem;
             font-weight: 800;
-            color: #325feb;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            color: var(--primary);
+            margin-bottom: 8px;
+            line-height: 1;
         }
 
         .result-subtitle {
-            font-size: 0.9rem;
-            color: #666666;
-            font-style: italic;
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
         }
 
-        .section-header {
-            text-align: center;
-            margin: 60px 0 40px 0;
+        .breakdown {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
         }
 
-        .section-header h2 {
-            font-size: clamp(2rem, 4vw, 2.5rem);
-            color: #325feb;
-            margin-bottom: 10px;
-            font-weight: 700;
+        .breakdown-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 16px;
         }
 
-        .section-header p {
-            color: #666666;
-            font-size: 1.1rem;
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .final-cost {
-            background: linear-gradient(135deg, #325feb, #1e40af);
-            border-radius: 25px;
-            padding: 50px;
-            text-align: center;
-            margin: 60px 0;
-            position: relative;
-            overflow: hidden;
-            animation: pulse 2s infinite;
-            color: #FFFFFF;
+        .breakdown-item:last-child {
+            border-bottom: none;
         }
 
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 30px rgba(50, 95, 235, 0.5); }
-            50% { box-shadow: 0 0 50px rgba(50, 95, 235, 0.8); }
+        .breakdown-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
         }
 
-        .final-cost h3 {
-            font-size: clamp(1.5rem, 3vw, 2rem);
-            margin-bottom: 20px;
+        .breakdown-value {
+            font-size: 0.875rem;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            color: var(--text-dark-panel);
         }
 
-        .final-amount {
-            font-size: clamp(3rem, 8vw, 5rem);
-            font-weight: 900;
-            margin-bottom: 20px;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-        }
-
-        .final-subtitle {
-            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
-            margin-bottom: 30px;
-            font-style: italic;
+        .cta-section {
+            margin-top: auto;
         }
 
         .cta-button {
-            display: inline-block;
-            background: #FFFFFF;
-            color: #325feb;
-            padding: 20px 40px;
-            font-size: 1.3rem;
-            font-weight: 700;
+            display: block;
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 20px 24px;
+            font-size: 1rem;
+            font-weight: 600;
             text-decoration: none;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border: 3px solid #FFFFFF;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            margin-top: 24px;
         }
 
         .cta-button:hover {
-            background: transparent;
-            color: #FFFFFF;
-            transform: scale(1.05);
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(50, 95, 235, 0.3);
         }
 
-        .impact-grid {
+        .impact-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 32px;
         }
 
         .impact-card {
-            background: rgba(50, 95, 235, 0.05);
-            border: 1px solid rgba(50, 95, 235, 0.2);
-            border-radius: 15px;
-            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
             text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .impact-card:hover {
-            border-color: #325feb;
-            transform: translateY(-3px);
         }
 
         .impact-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .inputs-section {
-                padding: 20px;
-            }
-            
-            .input-grid {
+        .impact-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .impact-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 1024px) {
+            .calculator-container {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                max-width: 600px;
             }
             
-            .final-cost {
-                padding: 30px 20px;
+            .right-panel {
+                order: -1;
+            }
+            
+            .left-panel, .right-panel {
+                padding: 32px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .left-panel, .right-panel {
+                padding: 24px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-result {
+                font-size: 2.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>RÉVEIL BRUTAL</h1>
-            <p>Découvre ce que tes processus manuels te coûtent <strong>vraiment</strong></p>
-        </header>
+    <div class="calculator-container">
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+            <span id="theme-icon">🌙</span>
+        </button>
+        <div class="left-panel">
+            <div class="header">
+                <h1>Découvre ce que tes processus te coûtent</h1>
+                <p>Calcule le vrai coût de tes tâches manuelles répétitives</p>
+            </div>
 
-        <section class="inputs-section">
-            <div class="input-grid">
+            <div class="input-section">
                 <div class="input-group">
-                    <label class="input-label">Combien de temps cette merde te prend ?</label>
+                    <label class="input-label">Combien de temps cette tâche te prend ?</label>
                     <div class="slider-container">
                         <input type="range" id="timeSlider" class="slider" min="5" max="120" value="30">
-                        <div class="slider-value" id="timeValue">30 minutes</div>
+                        <div class="slider-value" id="timeValue">30 min</div>
                     </div>
                 </div>
 
@@ -359,17 +410,11 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">Tu te paies combien de l'heure ?</label>
+                    <label class="input-label">Ton taux horaire (€)</label>
                     <input type="number" id="rateInput" class="number-input" min="15" max="200" value="35" placeholder="35">
                 </div>
 
-                <div class="input-group">
-                    <label class="input-label">Depuis combien d'années tu fais ça ?</label>
-                    <div class="slider-container">
-                        <input type="range" id="yearsSlider" class="slider" min="1" max="20" value="3">
-                        <div class="slider-value" id="yearsValue">3 ans</div>
-                    </div>
-                </div>
+
 
                 <div class="input-group">
                     <label class="input-label">Combien de personnes font cette tâche ?</label>
@@ -379,85 +424,58 @@
                     </div>
                 </div>
             </div>
-        </section>
-
-        <div class="section-header">
-            <h2>Les Chiffres Bruts</h2>
-            <p>Aïe... ça fait mal, non ?</p>
         </div>
 
-        <section class="results-section">
-            <div class="result-card">
-                <div class="result-title">Temps Perdu Annuel</div>
-                <div class="result-value" id="annualHours">78</div>
-                <div class="result-subtitle">heures dans le vide</div>
+        <div class="right-panel">
+            <div class="results-header">
+                <div class="results-title">Ce processus te coûte :</div>
+                <div class="main-result" id="totalCost">2 730€</div>
+                <div class="result-subtitle">par an</div>
             </div>
 
-            <div class="result-card">
-                <div class="result-title">Coût Annuel</div>
-                <div class="result-value" id="annualCost">2 730€</div>
-                <div class="result-subtitle">qui partent en fumée</div>
+            <div class="breakdown">
+                <div class="breakdown-title">Comment on arrive à ce chiffre :</div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Temps perdu par an</span>
+                    <span class="breakdown-value" id="annualHours">78h</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Coût mensuel</span>
+                    <span class="breakdown-value" id="monthlyCost">228€</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Heures collectives (équipe)</span>
+                    <span class="breakdown-value" id="collectiveHours">78h</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Mois de SMIC gaspillés</span>
+                    <span class="breakdown-value" id="smicMonths">2.0</span>
+                </div>
             </div>
 
-            <div class="result-card">
-                <div class="result-title">Coût Historique</div>
-                <div class="result-value" id="historicalCost">8 190€</div>
-                <div class="result-subtitle">déjà perdus à jamais</div>
-            </div>
-        </section>
-
-        <div class="section-header">
-            <h2>La Réalité qui Pique</h2>
-            <p>Imagine si tu récupérais tout ça...</p>
-        </div>
-
-        <section class="results-section impact-grid">
-            <div class="impact-card">
-                <div class="impact-icon">🏠</div>
-                <div class="result-title">Soirées Famille Perdues</div>
-                <div class="result-value" id="familyEvenings">26</div>
-                <div class="result-subtitle">soirées avec tes proches</div>
+            <div class="impact-cards">
+                <div class="impact-card">
+                    <div class="impact-icon">🏠</div>
+                    <div class="impact-value" id="familyEvenings">26</div>
+                    <div class="impact-label">soirées famille perdues</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">🏖️</div>
+                    <div class="impact-value" id="vacationWeeks">2</div>
+                    <div class="impact-label">semaines de vacances</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">📺</div>
+                    <div class="impact-value" id="netflixSeasons">10</div>
+                    <div class="impact-label">saisons Netflix</div>
+                </div>
             </div>
 
-            <div class="impact-card">
-                <div class="impact-icon">🏖️</div>
-                <div class="result-title">Semaines de Vacances</div>
-                <div class="result-value" id="vacationWeeks">2</div>
-                <div class="result-subtitle">semaines au soleil</div>
+            <div class="cta-section">
+                <a href="https://cal.com/wissam-darsouni/appel-decouverte-30min" class="cta-button">
+                    Je veux automatiser ça maintenant
+                </a>
             </div>
-
-            <div class="impact-card">
-                <div class="impact-icon">📺</div>
-                <div class="result-title">Saisons Netflix</div>
-                <div class="result-value" id="netflixSeasons">10</div>
-                <div class="result-subtitle">séries complètes</div>
-            </div>
-        </section>
-
-        <div class="section-header">
-            <h2>L'Impact Équipe</h2>
-            <p>C'est encore pire...</p>
-        </div>
-
-        <section class="results-section">
-            <div class="result-card">
-                <div class="result-title">Heures Collectives</div>
-                <div class="result-value" id="collectiveHours">78</div>
-                <div class="result-subtitle">heures perdues par an</div>
-            </div>
-
-            <div class="result-card">
-                <div class="result-title">Mois de SMIC Gaspillés</div>
-                <div class="result-value" id="smicMonths">2</div>
-                <div class="result-subtitle">mois de SMIC par an</div>
-            </div>
-        </section>
-
-        <div class="final-cost">
-            <h3>Coût Total de ce Processus :</h3>
-            <div class="final-amount" id="totalCost">8 190€</div>
-            <div class="final-subtitle">Et si tu automatisais ça demain ?</div>
-            <a href="https://cal.com/wissam-darsouni/appel-decouverte-30min" class="cta-button">Je veux automatiser ça maintenant</a>
         </div>
     </div>
 
@@ -466,47 +484,49 @@
         const timeSlider = document.getElementById('timeSlider');
         const frequencySlider = document.getElementById('frequencySlider');
         const rateInput = document.getElementById('rateInput');
-        const yearsSlider = document.getElementById('yearsSlider');
         const peopleSlider = document.getElementById('peopleSlider');
 
         // Get all display elements
         const timeValue = document.getElementById('timeValue');
         const frequencyValue = document.getElementById('frequencyValue');
-        const yearsValue = document.getElementById('yearsValue');
         const peopleValue = document.getElementById('peopleValue');
 
         // Get result elements
+        const totalCost = document.getElementById('totalCost');
         const annualHours = document.getElementById('annualHours');
-        const annualCost = document.getElementById('annualCost');
-        const historicalCost = document.getElementById('historicalCost');
+        const monthlyCost = document.getElementById('monthlyCost');
+        const collectiveHours = document.getElementById('collectiveHours');
+        const smicMonths = document.getElementById('smicMonths');
         const familyEvenings = document.getElementById('familyEvenings');
         const vacationWeeks = document.getElementById('vacationWeeks');
         const netflixSeasons = document.getElementById('netflixSeasons');
-        const collectiveHours = document.getElementById('collectiveHours');
-        const smicMonths = document.getElementById('smicMonths');
-        const totalCost = document.getElementById('totalCost');
 
         function updateSliderValues() {
-            timeValue.textContent = `${timeSlider.value} minutes`;
+            timeValue.textContent = `${timeSlider.value} min`;
             frequencyValue.textContent = `${frequencySlider.value}x/semaine`;
-            yearsValue.textContent = `${yearsSlider.value} ans`;
             peopleValue.textContent = `${peopleSlider.value} personne${peopleSlider.value > 1 ? 's' : ''}`;
         }
 
         function animateNumber(element, newValue, suffix = '') {
             const startValue = parseFloat(element.textContent.replace(/[^\d.-]/g, '')) || 0;
             const endValue = newValue;
-            const duration = 500;
+            const duration = 400;
             const startTime = performance.now();
 
             function updateNumber(currentTime) {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / duration, 1);
                 
-                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const easeOutQuart = 1 - Math.pow(1 - progress, 3);
                 const currentValue = startValue + (endValue - startValue) * easeOutQuart;
                 
-                element.textContent = Math.round(currentValue).toLocaleString('fr-FR') + suffix;
+                if (suffix === '€') {
+                    element.textContent = Math.round(currentValue).toLocaleString('fr-FR') + '€';
+                } else if (suffix === 'h') {
+                    element.textContent = Math.round(currentValue) + 'h';
+                } else {
+                    element.textContent = (Math.round(currentValue * 10) / 10).toString();
+                }
                 
                 if (progress < 1) {
                     requestAnimationFrame(updateNumber);
@@ -520,13 +540,12 @@
             const minutes = parseInt(timeSlider.value);
             const frequency = parseInt(frequencySlider.value);
             const rate = parseFloat(rateInput.value) || 35;
-            const years = parseInt(yearsSlider.value);
             const people = parseInt(peopleSlider.value);
 
-            // Core calculations
+            // Core calculations (annual basis)
             const annualHoursCalc = (minutes * frequency * 52) / 60;
             const annualCostCalc = annualHoursCalc * rate * people;
-            const historicalCostCalc = annualCostCalc * years;
+            const monthlyCostCalc = annualCostCalc / 12;
 
             // Life equivalents
             const familyEveningsCalc = Math.floor(annualHoursCalc / 3);
@@ -538,59 +557,121 @@
             const smicMonthsCalc = annualCostCalc / 1400; // SMIC reference: 1400€/mois
 
             // Animate all values
-            animateNumber(annualHours, Math.round(annualHoursCalc));
-            animateNumber(annualCost, Math.round(annualCostCalc), '€');
-            animateNumber(historicalCost, Math.round(historicalCostCalc), '€');
-            
+            animateNumber(totalCost, Math.round(annualCostCalc), '€');
+            animateNumber(annualHours, Math.round(annualHoursCalc), 'h');
+            animateNumber(monthlyCost, Math.round(monthlyCostCalc), '€');
+            animateNumber(collectiveHours, Math.round(collectiveHoursCalc), 'h');
+            animateNumber(smicMonths, Math.round(smicMonthsCalc * 10) / 10);
             animateNumber(familyEvenings, familyEveningsCalc);
             animateNumber(vacationWeeks, vacationWeeksCalc);
             animateNumber(netflixSeasons, netflixSeasonsCalc);
-            
-            animateNumber(collectiveHours, Math.round(collectiveHoursCalc));
-            animateNumber(smicMonths, Math.round(smicMonthsCalc * 10) / 10); // One decimal place
-            
-            animateNumber(totalCost, Math.round(historicalCostCalc), '€');
         }
 
-        // Event listeners
+        function updateSliderBackground(slider) {
+            const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+            slider.style.background = `linear-gradient(to right, var(--primary) 0%, var(--primary) ${value}%, var(--border) ${value}%, var(--border) 100%)`;
+        }
+
+        function animateSliderUpdate(slider, callback) {
+            updateSliderBackground(slider);
+            if (callback) callback();
+        }
+
+        // Event listeners with proper animation
         timeSlider.addEventListener('input', () => {
-            updateSliderValues();
-            calculateResults();
+            animateSliderUpdate(timeSlider, () => {
+                updateSliderValues();
+                calculateResults();
+            });
         });
 
         frequencySlider.addEventListener('input', () => {
-            updateSliderValues();
-            calculateResults();
+            animateSliderUpdate(frequencySlider, () => {
+                updateSliderValues();
+                calculateResults();
+            });
         });
 
         rateInput.addEventListener('input', calculateResults);
 
-        yearsSlider.addEventListener('input', () => {
-            updateSliderValues();
-            calculateResults();
-        });
-
         peopleSlider.addEventListener('input', () => {
-            updateSliderValues();
-            calculateResults();
-        });
-
-        // Initialize
-        updateSliderValues();
-        calculateResults();
-
-        // Add some extra visual feedback
-        document.querySelectorAll('.slider').forEach(slider => {
-            slider.addEventListener('input', function() {
-                const value = (this.value - this.min) / (this.max - this.min) * 100;
-                this.style.background = `linear-gradient(to right, #325feb 0%, #325feb ${value}%, #E5E5E5 ${value}%, #E5E5E5 100%)`;
+            animateSliderUpdate(peopleSlider, () => {
+                updateSliderValues();
+                calculateResults();
             });
         });
 
-        // Initialize slider backgrounds
+        // Add smooth visual feedback for all sliders
         document.querySelectorAll('.slider').forEach(slider => {
-            const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
-            slider.style.background = `linear-gradient(to right, #325feb 0%, #325feb ${value}%, #E5E5E5 ${value}%, #E5E5E5 100%)`;
+            slider.addEventListener('mouseover', () => {
+                slider.style.height = '8px';
+            });
+            
+            slider.addEventListener('mouseout', () => {
+                slider.style.height = '6px';
+            });
+            
+            slider.addEventListener('mousedown', () => {
+                slider.style.transform = 'scaleY(1.2)';
+            });
+            
+            slider.addEventListener('mouseup', () => {
+                slider.style.transform = 'scaleY(1)';
+            });
+        });
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle button
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (newTheme === 'dark') {
+                themeIcon.textContent = '☀️';
+            } else {
+                themeIcon.textContent = '🌙';
+            }
+            
+            // Re-initialize slider backgrounds after theme change
+            setTimeout(() => {
+                document.querySelectorAll('.slider').forEach(updateSliderBackground);
+            }, 100);
+        }
+
+        // Initialize theme
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (savedTheme === 'dark') {
+                themeIcon.textContent = '☀️';
+            } else {
+                themeIcon.textContent = '🌙';
+            }
+        }
+
+        // Initialize
+        initTheme();
+        updateSliderValues();
+        calculateResults();
+
+        // Initialize slider backgrounds with smooth animation
+        document.querySelectorAll('.slider').forEach(slider => {
+            updateSliderBackground(slider);
+            // Add a subtle glow effect
+            slider.addEventListener('focus', () => {
+                slider.style.boxShadow = '0 0 0 3px rgba(50, 95, 235, 0.1)';
+            });
+            slider.addEventListener('blur', () => {
+                slider.style.boxShadow = 'none';
+            });
         });
     </script>
 </body>
