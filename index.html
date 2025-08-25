@@ -475,8 +475,16 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">Ton taux horaire (€)</label>
-                    <input type="number" id="rateInput" class="number-input" min="15" max="200" value="35" placeholder="35">
+                    <label class="input-label">Ton salaire annuel (€)</label>
+                    <input type="number" id="yearlyIncomeInput" class="number-input" min="20000" max="300000" value="50000" placeholder="50000">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Heures travaillées par semaine</label>
+                    <div class="slider-container">
+                        <input type="range" id="weeklyHoursSlider" class="slider" min="20" max="120" value="35">
+                        <div class="slider-value" id="weeklyHoursValue">35h</div>
+                    </div>
                 </div>
 
 
@@ -506,6 +514,10 @@
 
             <div class="breakdown">
                 <div class="breakdown-title">Comment on arrive à ce chiffre :</div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Taux horaire calculé</span>
+                    <span class="breakdown-value" id="hourlyRate">27€</span>
+                </div>
                 <div class="breakdown-item">
                     <span class="breakdown-label">Temps perdu par an</span>
                     <span class="breakdown-value" id="annualHours">78h</span>
@@ -544,7 +556,7 @@
         </div>
 
         <footer class="footer">
-            WIZUS © 2025
+            WIZUS Solutions 2025 ©
         </footer>
     </div>
 
@@ -552,16 +564,19 @@
         // Get all input elements
         const timeSlider = document.getElementById('timeSlider');
         const frequencySlider = document.getElementById('frequencySlider');
-        const rateInput = document.getElementById('rateInput');
+        const yearlyIncomeInput = document.getElementById('yearlyIncomeInput');
+        const weeklyHoursSlider = document.getElementById('weeklyHoursSlider');
         const peopleSlider = document.getElementById('peopleSlider');
 
         // Get all display elements
         const timeValue = document.getElementById('timeValue');
         const frequencyValue = document.getElementById('frequencyValue');
+        const weeklyHoursValue = document.getElementById('weeklyHoursValue');
         const peopleValue = document.getElementById('peopleValue');
 
         // Get result elements
         const totalCost = document.getElementById('totalCost');
+        const hourlyRate = document.getElementById('hourlyRate');
         const annualHours = document.getElementById('annualHours');
         const monthlyCost = document.getElementById('monthlyCost');
         const collectiveHours = document.getElementById('collectiveHours');
@@ -573,6 +588,7 @@
         function updateSliderValues() {
             timeValue.textContent = `${timeSlider.value} min`;
             frequencyValue.textContent = `${frequencySlider.value}x/semaine`;
+            weeklyHoursValue.textContent = `${weeklyHoursSlider.value}h`;
             peopleValue.textContent = `${peopleSlider.value} personne${peopleSlider.value > 1 ? 's' : ''}`;
         }
 
@@ -608,12 +624,16 @@
         function calculateResults() {
             const minutes = parseInt(timeSlider.value);
             const frequency = parseInt(frequencySlider.value);
-            const rate = parseFloat(rateInput.value) || 35;
+            const yearlyIncome = parseFloat(yearlyIncomeInput.value) || 50000;
+            const weeklyHours = parseInt(weeklyHoursSlider.value);
             const people = parseInt(peopleSlider.value);
+
+            // Calculate hourly rate from yearly income and weekly hours
+            const hourlyRateCalc = yearlyIncome / (weeklyHours * 52);
 
             // Core calculations (annual basis)
             const annualHoursCalc = (minutes * frequency * 52) / 60;
-            const annualCostCalc = annualHoursCalc * rate * people;
+            const annualCostCalc = annualHoursCalc * hourlyRateCalc * people;
             const monthlyCostCalc = annualCostCalc / 12;
 
             // Life equivalents
@@ -627,6 +647,7 @@
 
             // Animate all values
             animateNumber(totalCost, Math.round(annualCostCalc), '€');
+            animateNumber(hourlyRate, Math.round(hourlyRateCalc), '€');
             animateNumber(annualHours, Math.round(annualHoursCalc), 'h');
             animateNumber(monthlyCost, Math.round(monthlyCostCalc), '€');
             animateNumber(collectiveHours, Math.round(collectiveHoursCalc), 'h');
@@ -661,7 +682,14 @@
             });
         });
 
-        rateInput.addEventListener('input', calculateResults);
+        yearlyIncomeInput.addEventListener('input', calculateResults);
+
+        weeklyHoursSlider.addEventListener('input', () => {
+            animateSliderUpdate(weeklyHoursSlider, () => {
+                updateSliderValues();
+                calculateResults();
+            });
+        });
 
         peopleSlider.addEventListener('input', () => {
             animateSliderUpdate(peopleSlider, () => {
